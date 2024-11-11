@@ -28,47 +28,47 @@ public class Libro{
     /*
     Setters y Getters
     */
-    private String getAnioPublicacion() {
+    public String getAnioPublicacion() {
         return anioPublicacion;
     }
-    private Autor getAutor() {
+    public Autor getAutor() {
         return autor;
     }
-    private Categoria getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
-    private String getDescripcion() {
+    public String getDescripcion() {
         return descripcion;
     }
-    private String getDisponibilidad() {
+    public String getDisponibilidad() {
         return disponibilidad;
     }
-    private short getIdLibro() {
+    public short getIdLibro() {
         return idLibro;
     }
-    private String getTitulo() {
+    public String getTitulo() {
         return titulo;
     }
 
-    private void setAnioPublicacion(String anioPublicacion) {
+    public void setAnioPublicacion(String anioPublicacion) {
         this.anioPublicacion = anioPublicacion;
     }
-    private void setAutor(Autor autor) {
+    public void setAutor(Autor autor) {
         this.autor = autor;
     }
-    private void setCategoria(Categoria categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
-    private void setDescripcion(String descripcion) {
+    public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-    private void setDisponibilidad(String disponibilidad) {
+    public void setDisponibilidad(String disponibilidad) {
         this.disponibilidad = disponibilidad;
     }
-    private void setIdLibro(short idLibro) {
+    public void setIdLibro(short idLibro) {
         this.idLibro = idLibro;
     }
-    private void setTitulo(String titulo) {
+    public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
 
