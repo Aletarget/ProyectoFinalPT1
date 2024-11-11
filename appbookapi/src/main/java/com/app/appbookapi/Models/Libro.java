@@ -1,12 +1,86 @@
 package com.app.appbookapi.Models;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Libro {
+public class Libro{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private short idLibro;
+    private String titulo;
+    private String anioPublicacion;
+    private String disponibilidad;
+    private String descripcion;
 
+    @ManyToOne
+    @JoinColumn(name = "idAutorFK")
+    private Autor autor;
+    
+    @ManyToOne
+    @JoinColumn(name = "idCategoriaFK")
+    private Categoria categoria;
+
+    /*
+    Setters y Getters
+    */
+    private String getAnioPublicacion() {
+        return anioPublicacion;
+    }
+    private Autor getAutor() {
+        return autor;
+    }
+    private Categoria getCategoria() {
+        return categoria;
+    }
+    private String getDescripcion() {
+        return descripcion;
+    }
+    private String getDisponibilidad() {
+        return disponibilidad;
+    }
+    private short getIdLibro() {
+        return idLibro;
+    }
+    private String getTitulo() {
+        return titulo;
+    }
+
+    private void setAnioPublicacion(String anioPublicacion) {
+        this.anioPublicacion = anioPublicacion;
+    }
+    private void setAutor(Autor autor) {
+        this.autor = autor;
+    }
+    private void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+    private void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    private void setDisponibilidad(String disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+    private void setIdLibro(short idLibro) {
+        this.idLibro = idLibro;
+    }
+    private void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public Libro getLibro(){
+        Libro libro = new Libro();
+        libro.setAnioPublicacion(getAnioPublicacion());
+        libro.setAutor(getAutor());
+        libro.setCategoria(getCategoria());
+        libro.setDescripcion(getDescripcion());
+        libro.setIdLibro(getIdLibro());
+        libro.setTitulo(getTitulo());
+        libro.setDisponibilidad(getDisponibilidad());
+        return libro;
+    }
 }
