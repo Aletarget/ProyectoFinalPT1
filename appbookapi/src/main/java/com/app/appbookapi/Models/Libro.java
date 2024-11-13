@@ -1,19 +1,28 @@
 package com.app.appbookapi.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
+@Table(name = "Libros")
 public class Libro{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private short idLibro;
     private String titulo;
-    private String anioPublicacion;
+    @Column(name = "anioPublicacion")
+    @Temporal(TemporalType.DATE)
+    private Date anioPublicacion;
     private String disponibilidad;
     private String descripcion;
 
@@ -28,7 +37,7 @@ public class Libro{
     /*
     Setters y Getters
     */
-    public String getAnioPublicacion() {
+    public Date getAnioPublicacion() {
         return anioPublicacion;
     }
     public Autor getAutor() {
@@ -50,7 +59,7 @@ public class Libro{
         return titulo;
     }
 
-    public void setAnioPublicacion(String anioPublicacion) {
+    public void setAnioPublicacion(Date anioPublicacion) {
         this.anioPublicacion = anioPublicacion;
     }
     public void setAutor(Autor autor) {
@@ -70,17 +79,5 @@ public class Libro{
     }
     public void setTitulo(String titulo) {
         this.titulo = titulo;
-    }
-
-    public Libro getLibro(){
-        Libro libro = new Libro();
-        libro.setAnioPublicacion(getAnioPublicacion());
-        libro.setAutor(getAutor());
-        libro.setCategoria(getCategoria());
-        libro.setDescripcion(getDescripcion());
-        libro.setIdLibro(getIdLibro());
-        libro.setTitulo(getTitulo());
-        libro.setDisponibilidad(getDisponibilidad());
-        return libro;
     }
 }

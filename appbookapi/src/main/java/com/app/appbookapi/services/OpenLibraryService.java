@@ -1,4 +1,4 @@
-package com.app.appbookapi.services;
+package com.app.appbookapi.Services;
 
 import com.app.appbookapi.Models.Libro;
 import org.springframework.stereotype.Service;

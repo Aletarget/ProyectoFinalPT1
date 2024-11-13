@@ -1,4 +1,4 @@
-package com.app.appbookapi.services;
+package com.app.appbookapi.Services;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
