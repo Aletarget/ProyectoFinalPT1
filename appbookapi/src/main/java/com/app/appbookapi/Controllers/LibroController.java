@@ -4,87 +4,112 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.app.appbookapi.Models.Autor;
 import com.app.appbookapi.Models.Categoria;
 import com.app.appbookapi.Models.Libro;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
+import com.app.appbookapi.services.ApiResponse;
+import com.app.appbookapi.services.OpenLibraryService;
+import com.app.appbookapi.Controllers.LibroRepository;
 
 @Controller
+@RequestMapping("/libros")
 public class LibroController {
+
     @Autowired
     private LibroRepository librorepository;
 
+    @Autowired
+    private OpenLibraryService openLibraryService;
 
-    //CRUD PARA LISTAR LIBROS SEGUN AUTOR, CATEGORIA Y PRESTAMOS
+    // CRUD PARA LISTAR LIBROS SEGÚN AUTOR, CATEGORÍA Y PRÉSTAMOS
     @GetMapping("/buscarAutor")
     public List<Autor> buscarPorAutor(@RequestParam String autor) {
-        return librorepository.busquedaPorAutor(autor); //Con el uso de JPA no es necesario implementar una logica interna en el metodo que se implemento en la interfaz
+        return librorepository.busquedaPorAutor(autor);
     }
+
     @GetMapping("/buscarCate")
     public List<Categoria> buscarPorCategoria(@RequestParam String categoria) {
-        return librorepository.busquedaPorCategoria(categoria); 
-    }    
-           
-    
-    //Busqueda
+        return librorepository.busquedaPorCategoria(categoria);
+    }
+
+    @GetMapping("/buscarPrest")
+    public List<Libro> buscarPorPrestamo(@RequestParam short prestamo) {
+        return librorepository.busquedaSegunPrestamo(prestamo);
+    }
+
+    // Búsqueda de libro por nombre
     @GetMapping("/buscar")
     public Libro buscar(@RequestParam String nombre) {
         return librorepository.buscarPorNombre(nombre);
     }
+
     private Libro buscarPorId(short id) {
         return librorepository.buscarPorId(id);
     }
 
-    //Guardar
+    // Guardar un libro. Si no se encuentra en la base de datos, intenta obtenerlo de OpenLibrary.
     @PostMapping("/guardar")
-    public void agregar(@RequestBody Libro libro) {
-        //Codigo para añadir un nuevo libro
+    public Libro agregar(@RequestBody Libro libro) {
+        Libro libroExistente = librorepository.buscarPorNombre(libro.getTitulo());
+        if (libroExistente != null) {
+            return libroExistente;
+        } else {
+            // Intentar obtener el libro desde OpenLibrary
+            List<Libro> libros = openLibraryService.buscarLibros(libro.getTitulo());
+            if (libros != null && !libros.isEmpty()) {
+                Libro libroDesdeApi = libros.get(0);
+                libro.setDescripcion(libroDesdeApi.getDescripcion());
+                libro.setAnioPublicacion(libroDesdeApi.getAnioPublicacion());
+                libro.setDisponibilidad(libroDesdeApi.getDisponibilidad() != null ? libroDesdeApi.getDisponibilidad() : "Desconocida");
+                librorepository.save(libro);
+                return libro;
+            } else {
+                // Si no se encuentra el libro en OpenLibrary
+                libro.setDescripcion("No se encontró información en OpenLibrary");
+                librorepository.save(libro);
+                return libro;
+            }
+        }
     }
-    
-    // Actualizar
+
+    // Actualizar un libro existente
     @PutMapping("/actualizar/{id}")
     public void actualizar(@PathVariable short id, @RequestBody Libro libroCurrent) {
-        
-        if (validarBusqueda(id) != null) {
-            Libro viejo = validarBusqueda(id);
+        Libro viejo = validarBusqueda(id);
+        if (viejo != null) {
             viejo.setAnioPublicacion(libroCurrent.getAnioPublicacion());
             viejo.setAutor(libroCurrent.getAutor());
             viejo.setCategoria(libroCurrent.getCategoria());
             viejo.setDescripcion(libroCurrent.getDescripcion());
             viejo.setTitulo(libroCurrent.getTitulo());
-        }else{
-            //Codigo para redirigir a una direccion donde muestre que la busqueda no pudo encontrar nada
+            librorepository.save(viejo);
+        } else {
+            // Redirigir o manejar el caso donde no se encuentra el libro
         }
     }
-    // Eliminar
-    @DeleteMapping
-    
 
-    // Validacion de busqueda
-    public Libro validarBusqueda(String nombre){
-        Libro libro = buscar(nombre);
+    // Eliminar un libro por ID
+    @DeleteMapping("/eliminar/{id}")
+    public void eliminar(@PathVariable short id) {
+        Libro libro = validarBusqueda(id);
         if (libro != null) {
-            return libro;
-        }else{
-            return null;
+            librorepository.delete(libro);
+        } else {
+            // Redirigir o manejar el caso donde no se encuentra el libro
         }
     }
-    public Libro validarBusqueda(short id){
-        Libro libro = buscarPorId(id);
-                if (libro != null) {
-                    return libro;
-                }else{
-                    return null;
-                }
-            }
 
-    
+    // Validación de búsqueda por nombre
+    public Libro validarBusqueda(String nombre) {
+        Libro libro = buscar(nombre);
+        return libro != null ? libro : null;
+    }
+
+    // Validación de búsqueda por ID
+    public Libro validarBusqueda(short id) {
+        Libro libro = buscarPorId(id);
+        return libro != null ? libro : null;
+    }
 }
